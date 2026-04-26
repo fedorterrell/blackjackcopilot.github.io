@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blackjack Copilot — Hi-Lo Card Counting for iPhone</title>
+  <meta name="description" content="Professional Hi-Lo card counting for iPhone. Real-time true count, Illustrious 18 play deviations, and bet sizing at the table.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0d1117;
+      --panel:   #161b22;
+      --border:  #30363d;
+      --blue:    #58a6ff;
+      --gold:    #d4a017;
+      --green:   #3fb950;
+      --red:     #f85149;
+      --text:    #e6edf3;
+      --muted:   #8b949e;
+      --radius:  12px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { padding: 72px 0; }
+    section + section { border-top: 1px solid var(--border); }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 96px 0 72px;
+    }
+
+    .hero-icon {
+      width: 120px;
+      height: 120px;
+      border-radius: 26px;
+      display: block;
+      margin: 0 auto 28px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 span { color: var(--gold); }
+
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 40px;
+    }
+
+    .badge-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 10px 20px 10px 12px;
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+
+    .badge-wrap svg { flex-shrink: 0; }
+
+    /* ── Features ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .features-grid { grid-template-columns: 1fr; }
+    }
+
+    .feature-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .feature-card p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Section headings ── */
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 40px;
+    }
+
+    /* ── Screenshots ── */
+    .screenshots-scroll {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .screenshots-scroll::-webkit-scrollbar { height: 6px; }
+    .screenshots-scroll::-webkit-scrollbar-track { background: transparent; }
+    .screenshots-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .screenshot-item {
+      flex: 0 0 auto;
+      text-align: center;
+    }
+
+    .screenshot-item img {
+      display: block;
+      height: 460px;
+      width: auto;
+      border-radius: 28px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    .screenshot-item figcaption {
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ── Tag chips ── */
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .chip {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+    }
+
+    .chip.green { border-color: var(--green); color: var(--green); }
+    .chip.gold  { border-color: var(--gold);  color: var(--gold);  }
+    .chip.blue  { border-color: var(--blue);  color: var(--blue);  }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 2rem; }
+      .hero-sub { font-size: 1rem; }
+      section { padding: 48px 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="container">
+    <img src="assets/icon.png" alt="Blackjack Copilot app icon" class="hero-icon">
+    <h1>Blackjack <span>Copilot</span></h1>
+    <p class="hero-sub">Professional Hi-Lo card counting for iPhone. Real-time true count, play deviations, and bet sizing at the table.</p>
+    <div class="badge-wrap">
+      <!-- Apple App Store badge (monochrome, coming soon) -->
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M11 2C6.03 2 2 6.03 2 11s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm.5 13.5h-1v-5h1v5zm0-6.5h-1V7.5h1V9z" fill="#8b949e"/>
+      </svg>
+      Coming Soon on the App Store
+    </div>
+    <div class="chip-row" style="justify-content:center;margin-top:28px;">
+      <span class="chip blue">iOS 16+</span>
+      <span class="chip green">Hi-Lo System</span>
+      <span class="chip gold">Illustrious 18</span>
+      <span class="chip">English &amp; French</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Features ── -->
+<section>
+  <div class="container">
+    <p class="section-label">Features</p>
+    <h2 class="section-title">Everything you need at the table</h2>
+    <div class="features-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon">🃏</div>
+        <h3>Hi-Lo Counting</h3>
+        <p>Running count and true count updated on every card entry. Ace side count with Stanford Wong surplus. Over-count protection prevents logging more cards than exist in the shoe.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>Play Deviations</h3>
+        <p>Full Illustrious 18 (Don Schlesinger) and Fab 4 surrender deviations. Deck-aware index tables for 1, 2, and 4–8 deck shoes. Deviations surface only when your true count makes them relevant.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Bet Sizing</h3>
+        <p>5-level bet ramp from 1× to 12× based on raw true count. Player edge estimate shown per level. Conservative sizing relative to full Kelly to reduce risk of ruin.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Shoe Tracking</h3>
+        <p>Color-coded TC sparkline (last 60 points visible). Penetration bar with configurable shuffle alert at 65–80%. Round delta tracker shows RC change and cards seen per round.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Screenshots ── -->
+<section>
+  <div class="container">
+    <p class="section-label">Screenshots</p>
+    <h2 class="section-title">Designed for the felt</h2>
+    <div class="screenshots-scroll" role="list">
+      <figure class="screenshot-item" role="listitem">
+        <img src="assets/ss1.png" alt="Main screen">
+        <figcaption>Main screen</figcaption>
+      </figure>
+      <figure class="screenshot-item" role="listitem">
+        <img src="assets/ss2.png" alt="Live counting">
+        <figcaption>Live counting</figcaption>
+      </figure>
+      <figure class="screenshot-item" role="listitem">
+        <img src="assets/ss3.png" alt="Penetration &amp; TC sparkline">
+        <figcaption>Penetration &amp; TC sparkline</figcaption>
+      </figure>
+      <figure class="screenshot-item" role="listitem">
+        <img src="assets/ss4.png" alt="Settings">
+        <figcaption>Settings</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="container">
+    <p>Developed by <a href="https://github.com/PiotrSkotnicki" target="_blank" rel="noopener">SSD</a> &nbsp;·&nbsp; <a href="/privacy">Privacy Policy</a></p>
+    <p style="margin-top:8px;">© 2026 SSD</p>
+  </div>
+</footer>
+
+</body>
+</html>
