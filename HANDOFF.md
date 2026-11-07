@@ -13,11 +13,15 @@ A two-page static GitHub Pages site for the Blackjack Copilot iOS app App Store 
 
 ## App Store URLs
 
+The site is hosted as a GitHub project page (not a user root page):
+
 | App Store Connect field | URL |
 |-------------------------|-----|
-| Marketing URL | `https://blackjackcopilot.github.io` |
-| Privacy Policy URL | `https://blackjackcopilot.github.io/privacy` |
+| Marketing URL | `https://fedorterrell.github.io/blackjackcopilot.github.io/` |
+| Privacy Policy URL | `https://fedorterrell.github.io/blackjackcopilot.github.io/privacy.html` |
 | Support URL | `https://github.com/PiotrSkotnicki` |
+
+> All internal links use relative paths (`index.html`, `privacy.html`) so they work under the `/blackjackcopilot.github.io/` subpath.
 
 ## Deploy
 
